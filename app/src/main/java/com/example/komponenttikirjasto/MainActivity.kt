@@ -1,53 +1,68 @@
 package com.example.komponenttikirjasto
 
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 import com.example.elecstore.RealtimeDatabase
+import com.example.elecstore.getData
+import com.example.elecstore.getKompoData
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.komponentit_selaus.*
+import org.w3c.dom.Text
 import java.lang.StringBuilder
 
-//Setting the data
+
+
+// Asetetaan data
 class MainActivity : AppCompatActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.komponentit_selaus)
+        setContentView(R.layout.activity_main)
 
-        var database = FirebaseDatabase.getInstance().reference
+        //Asetetaan databasen oksien nimet.
 
-        var name = "Products"
-        var prodnum = 3
-        var prodname = "Kompo"
-        var prodprice = 7
+        var name1 = "Komponentit"
+        var name2 = "Mikrokontrollerit"
 
+        //Määritellään polku, josta lähdetään liikkeelle databasessa
 
+        var database = FirebaseDatabase.getInstance().getReference("Products")
 
-        database.child(name).setValue(RealtimeDatabase(prodname,prodprice,prodnum))
-        database.addValueEventListener(getData)
-        database.addListenerForSingleValueEvent(getData)
-    }
+        //Asetetaan databaseen halutut arvot koodissa.
 
-    // Getting the data
+        database.child(name1).setValue(RealtimeDatabase("Komponentti", 1, 2))
+        database.child(name2).setValue(RealtimeDatabase("Mikrokontrolleri", 3, 4))
 
-    var getData = object : ValueEventListener{
-        override fun onCancelled(p0: DatabaseError) {
+        //Asetetaan listeneri mikropiirien valintapainikkeeseen,
+        //jota painaessa suoritetaan getData-luokan sisällä oleva koodi
 
+        buttonMikropiirit.setOnClickListener{
+            startActivity(Intent(applicationContext,getData::class.java))
         }
 
-        override fun onDataChange(p0: DataSnapshot) {
-            var sb = StringBuilder()
-            for ( i in p0.children){
-                var prodname1 = i.child("prodnum").getValue()
-                sb.append("$prodname1")
-            }
-            textViewTuotenimiKO1.setText(sb)
-
+        buttonKomponentit.setOnClickListener {
+            startActivity(Intent(applicationContext, getKompoData::class.java))
         }
 
     }
-
 }
+
+
+
+
+
+
+
+
+
